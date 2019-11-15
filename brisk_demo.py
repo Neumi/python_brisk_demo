@@ -4,8 +4,8 @@ import numpy as np
 try:
     import cv2
 except ImportError:
-    print 'Couldn\'t find opencv so trying to use the fallback' \
-          ' cv2.pyd (only for windows).'
+    print('Couldn\'t find opencv so trying to use the fallback' \
+          ' cv2.pyd (only for windows).')
     from _cv2_fallback import cv2
 
 
@@ -42,7 +42,7 @@ matcher = cv2.BFMatcher(cv2.NORM_L2SQR)
 obj_original = cv2.imread(path.join('source_images', 'object.png'),
                           cv2.CV_LOAD_IMAGE_COLOR)
 if obj_original is None:
-    print 'Couldn\'t find the object image with the provided path.'
+    print('Couldn\'t find the object image with the provided path.')
     sys.exit()
 
 
@@ -52,16 +52,16 @@ obj = cv2.cvtColor(obj_original, cv2.COLOR_BGR2GRAY)
 obj_mask = cv2.imread(path.join('source_images', 'object_mask.png'),
                       cv2.CV_LOAD_IMAGE_GRAYSCALE)
 if obj_mask is None:
-    print 'Couldn\'t find the object mask image with the provided path.' \
-          ' Continuing without it.'
+    print('Couldn\'t find the object mask image with the provided path.' \
+          ' Continuing without it.')
 
 
 # keypoints are "interesting" points in an image:
 obj_keypoints = detector.detect(obj, obj_mask)
 # this lines up each keypoint with a mathematical description
 obj_keypoints, obj_descriptors = extractor.compute(obj, obj_keypoints)
-print 'Object Summary  *************************************************'
-print '    {} keypoints'.format(len(obj_keypoints))
+print('Object Summary  *************************************************')
+print('    {} keypoints'.format(len(obj_keypoints)))
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -70,7 +70,7 @@ print '    {} keypoints'.format(len(obj_keypoints))
 scene_original = cv2.imread(path.join('source_images', 'scene.png'),
                             cv2.CV_LOAD_IMAGE_COLOR)
 if scene_original is None:
-    print 'Couldn\'t find the scene image with the provided path.'
+    print('Couldn\'t find the scene image with the provided path.')
     sys.exit()
 
 
@@ -78,14 +78,14 @@ scene = cv2.cvtColor(scene_original, cv2.COLOR_BGR2GRAY)
 scene_mask = cv2.imread(path.join('source_images', 'scene_mask.png'),
                         cv2.CV_LOAD_IMAGE_GRAYSCALE)
 if scene_mask is None:
-    print 'Couldn\'t find the scene mask image with the provided path.' \
-          ' Continuing without it.'
+    print('Couldn\'t find the scene mask image with the provided path.' \
+          ' Continuing without it.')
 
 
 scene_keypoints = detector.detect(scene, scene_mask)
 scene_keypoints, scene_descriptors = extractor.compute(scene, scene_keypoints)
-print 'Scene Summary  **************************************************'
-print '    {} keypoints'.format(len(scene_keypoints))
+print('Scene Summary  **************************************************')
+print('    {} keypoints'.format(len(scene_keypoints)))
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -94,7 +94,7 @@ print '    {} keypoints'.format(len(scene_keypoints))
 min_matches = 3
 matches = matcher.match(obj_descriptors, scene_descriptors)
 if len(matches) < min_matches:
-    print 'Not enough matches found between the image and scene keypoints.'
+    print('Not enough matches found between the image and scene keypoints.')
     sys.exit()
 
 
@@ -108,11 +108,11 @@ min_multiplier_tolerance = 10
 min_dist = min_dist or avg_dist * 1.0 / min_multiplier_tolerance
 good_matches = [match for match in matches if
                 match.distance <= min_multiplier_tolerance * min_dist]
-print 'Match Summary  **************************************************'
-print '    {} / {}      good / total matches'.format(len(good_matches),
-                                                     len(matches))
+print('Match Summary  **************************************************')
+print('    {} / {}      good / total matches'.format(len(good_matches),
+                                                     len(matches)))
 if len(good_matches) < min_matches:
-    print 'not enough good matches to continue'
+    print('not enough good matches to continue')
     sys.exit()
 
 
@@ -129,9 +129,9 @@ scene_matched_points = np.array([scene_keypoints[match.trainIdx].pt
 homography, homography_mask = cv2.findHomography(obj_matched_points,
                                                  scene_matched_points,
                                                  cv2.RANSAC, 2.0)
-print 'Homography Summary  **************************************************'
-print'    {} / {}      inliers / good matches'.format(np.sum(homography_mask),
-                                                      len(homography_mask))
+print('Homography Summary  **************************************************')
+print('    {} / {}      inliers / good matches'.format(np.sum(homography_mask),
+                                                      len(homography_mask)))
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -204,8 +204,8 @@ obj_in_scene_area = polygon_area(obj_in_scene_corners_float)
 area_min_allowed = obj_area * (1 - scale_tolerance) ** 2
 area_max_allowed = obj_area * (1 + scale_tolerance) ** 2
 if not (area_min_allowed < obj_in_scene_area < area_max_allowed):
-    print 'A homography was found but it seems too large or' \
-          ' too small for a real match.'
+    print('A homography was found but it seems too large or' \
+          ' too small for a real match.')
     use_extracted = False
 
 
